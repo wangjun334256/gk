@@ -1426,8 +1426,11 @@
                cachedDataMap = {};
                // 获取 Excel 文档数据
                cachedDataMap.dataList1 = await loadData1();
+               console.log("1、学生成绩：",cachedDataMap.dataList1);
                cachedDataMap.dataList2 = await loadData2();
+               console.log("2、一分一段：",cachedDataMap.dataList2);
                cachedDataMap.dataList3 = await loadData3();
+               console.log("3、学校信息：",cachedDataMap.dataList3);
 
                console.log('initPage 1_2、加载页面数据： 获取 Excel 文档数据 完成后：', cachedDataMap);
 
@@ -1498,7 +1501,7 @@
         function loadData1(){
             return new Promise((resolve) => {
                 setTimeout(() => {
-                    console.error('读取学生成绩excel文档:'+studentMap.name);
+                    console.log('读取学生成绩excel文档:'+studentMap.name);
 
                     // 1. 定义 Excel 文件路径
                     let filePath = './'+studentMap.name+'.xlsx';
@@ -1517,19 +1520,19 @@
                             return response.arrayBuffer();
                         })
                         .then(arrayBuffer => {
-                            console.error('读取学生成绩excel文档arrayBuffer:');
+                            console.log('读取学生成绩excel文档arrayBuffer:');
                             // 3. 解析 Excel 数据
                             const data = new Uint8Array(arrayBuffer);
-                            console.error(data);
+
                             const workbook = XLSX.read(data, { type: 'array' });
 
                             // 4. 获取第一个工作表
                             const firstSheetName = workbook.SheetNames[0];
                             const worksheet = workbook.Sheets[firstSheetName];
-
+                            console.log("学生成绩excel数据：worksheet",worksheet);
                             // 5. 转换为 JSON 格式
                             const jsonData = XLSX.utils.sheet_to_json(worksheet);
-
+                            console.log("学生成绩excel数据：jsonData",jsonData);
                             // 6. 初始化数据结构
                             const newdataMap = {
                                 dataList1: [],
@@ -1570,7 +1573,7 @@
                                     rankName2: '年排'
                                 });
                             });
-
+                            console.log("学生成绩excel数据：newdataMap",newdataMap);
                             resolve(newdataMap.dataList1);
                         })
                         .catch(error => {
