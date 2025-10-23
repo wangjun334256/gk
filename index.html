@@ -659,14 +659,16 @@
                         let studentMap_old = JSON.parse(storedData);
                         if(!(studentMap.name != studentMap_old.name && studentMap.id == studentMap_old.id)){
                             localStorage.setItem('studentMap', JSON.stringify(studentMap));
+                            console.log('点击登录，加载页面数据');
                             //重新加载页面
-
                             initPage();
+                        }else{
+                            console.log('点击登录，不加载页面数据');
                         }
                     }else{
+                        console.log('第一次登录');
                         localStorage.setItem('studentMap', JSON.stringify(studentMap));
                         //重新加载页面
-
                         initPage();
                     }
 
@@ -1401,8 +1403,9 @@
         window.onload = function() {
             // 从 localStorage 读取 studentMap
             const storedData = localStorage.getItem('studentMap');
-
+            console.log('刷新页面后，从 localStorage 读取 studentMap：',storedData);
             if (storedData) {
+                console.log('如果有缓存数据，把studentMap填入输入框，并加载该学生的页面数据');
                 //自动填写获取到的学生信息
                 studentMap = JSON.parse(storedData);
                 document.getElementById('username').value = studentMap.name;
@@ -1417,18 +1420,23 @@
            let cachedDataMap = await getFromIndexedDB(studentMap.id);
 
            if (cachedDataMap) {
-               console.log('从 IndexedDB 中读取数据');
+               console.log('initPage 1、加载页面数据：从 IndexedDB 中读取数据');
            } else {
+               console.log('initPage 1、加载页面数据： 获取 Excel 文档数据');
                cachedDataMap = {};
                // 获取 Excel 文档数据
                cachedDataMap.dataList1 = await loadData1();
                cachedDataMap.dataList2 = await loadData2();
                cachedDataMap.dataList3 = await loadData3();
 
+               console.log('initPage 1_2、加载页面数据： 获取 Excel 文档数据 完成后：', cachedDataMap);
+
                // 将 dataMap 存储到 IndexedDB
                await saveToIndexedDB(studentMap.id,cachedDataMap);
            }
            dataMap = cachedDataMap;
+
+           console.log('initPage 2、获取到数据后，调用方法加载数据', dataMap);
 
            //调用方法加载数据
            intPart1();
@@ -1589,8 +1597,6 @@
                             sheetNames.forEach(sheetName => {
                                 const sheet = workbook.Sheets[sheetName];
                                 const jsonData = XLSX.utils.sheet_to_json(sheet, { header: 1 });
-
-                                console.log('Sheet:', sheetName, 'Data:', jsonData);
 
                                 // 解析 Excel 数据
                                 const scoreList = [];
