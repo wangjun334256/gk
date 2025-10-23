@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>成绩趋势</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/echarts/5.4.3/echarts.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+
     <style>
         body {
             margin: 0;
@@ -23,6 +25,236 @@
             padding: 8px;
             text-align: left;
         }
+
+        /*登录样式 start*/
+        #loginContent {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            z-index: 1;
+            position: relative;
+        }
+
+        .login-container {
+            background: white;
+            padding: 2.5rem;
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 400px;
+            transition: transform 0.3s ease;
+        }
+
+        .login-container:hover {
+            transform: translateY(-5px);
+        }
+
+        .login-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .login-header h1 {
+            font-size: 1.8rem;
+            color: #333;
+            margin-bottom: 0.5rem;
+        }
+
+        .login-header p {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .form-group {
+            position: relative;
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group input {
+            width: 85%;
+            padding: 1rem 1rem 1rem 2.5rem;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .form-group input:focus {
+            border-color: #007bff;
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.2);
+        }
+
+        .form-group label {
+            position: absolute;
+            left: 2.5rem;
+            top: 1rem;
+            color: #999;
+            background: white;
+            padding: 0 0.25rem;
+            transition: all 0.3s ease;
+            pointer-events: none;
+        }
+
+        .form-group input:focus + label,
+        .form-group input:not(:placeholder-shown) + label {
+            top: -0.5rem;
+            left: 1.5rem;
+            font-size: 0.75rem;
+            color: #007bff;
+        }
+
+        .input-icon {
+            position: absolute;
+            left: 1rem;
+            top: 1rem;
+            color: #999;
+            transition: color 0.3s ease;
+        }
+
+        .form-group input:focus ~ .input-icon {
+            color: #007bff;
+        }
+
+        .form-options {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            font-size: 0.9rem;
+        }
+
+        .remember-me {
+            display: flex;
+            align-items: center;
+            color: #666;
+        }
+
+        .remember-me input {
+            margin-right: 0.5rem;
+        }
+
+        .forgot-password {
+            color: #007bff;
+            text-decoration: none;
+        }
+
+        .forgot-password:hover {
+            text-decoration: underline;
+        }
+
+        .login-button {
+            width: 100%;
+            padding: 1rem;
+            background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .login-button:hover {
+            background: linear-gradient(135deg, #0056b3 0%, #003d7a 100%);
+            transform: translateY(-2px);
+        }
+
+        .login-button svg {
+            width: 1rem;
+            height: 1rem;
+            transition: transform 0.3s ease;
+        }
+
+        .login-button:hover svg {
+            transform: translateX(3px);
+        }
+
+        .login-footer {
+            text-align: center;
+            margin-top: 1.5rem;
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .register-link {
+            color: #007bff;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .register-link:hover {
+            text-decoration: underline;
+        }
+
+        /*登录样式 end*/
+
+        /*退出登录样式 start*/
+        /* 按钮容器 */
+        .logout-wrapper {
+            position: fixed;
+            top: 0.6%;
+            right: 1%;
+            z-index: 1000;
+            display: none;
+        }
+
+        /* 按钮基础样式 */
+        .logout-btn {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            padding: 5px 10px;
+            background: #fff;
+            color: #ff4757;
+            border: 1px solid #ff4757;
+            border-radius: 10px;
+            font-size: 0.6rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s
+            ease;
+            box-shadow: 0 2px 10px rgba(255, 71, 87, 0.1);
+        }
+
+        /* 按钮悬停效果 */
+        .logout-btn:hover {
+            background: #ff4757;
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(255, 71, 87, 0.2);
+        }
+
+        /* 按钮激活效果 */
+        .logout-btn:active {
+            transform: translateY(0);
+        }
+
+        /* 图标样式 */
+        .logout-icon {
+            transition: transform 0.3s ease;
+        }
+
+        /* 悬停时图标动画 */
+        .logout-btn:hover .logout-icon {
+            transform: translateX(2px);
+        }
+        /*退出登录样式 end*/
+        .partContent {
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            /*z-index: -1;*/
+        }
+
         .part1 {
             position: absolute;
             left: 50%;
@@ -44,7 +276,7 @@
         }
         #chart {
             width: 100%;
-            max-width: 600px;
+            /*max-width: 600px;*/
             height: 300px;
             margin: 0 auto;
         }
@@ -354,7 +586,115 @@
     </style>
 </head>
 <body>
+    <div id="loginContent" >
+        <div class="login-container">
+            <div class="login-header">
+                <h1>学生登录</h1>
+                <p>欢迎回来，请登录您的账号</p>
+            </div>
+            <form id="loginForm">
+                <div class="form-group">
+                    <input type="text" id="username" name="username" placeholder=" " required>
+                    <label for="username">姓名</label>
+                    <span class="input-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                            <circle cx="12" cy="7" r="4"></circle>
+                        </svg>
+                    </span>
+                </div>
+                <div class="form-group">
+                    <input type="text" id="password" name="password" placeholder=" " required>
+                    <label for="password">学号</label>
+                    <span class="input-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="3" y="11" width="18" height="11" rx="2"></rect>
+                            <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                        </svg>
+                    </span>
+                </div>
+                <div class="form-options">
+                    <!--<label class="remember-me">
+                        <input type="checkbox" name="remember"> 记住我
+                    </label>
+                    <a href="#" class="forgot-password">忘记密码？</a>-->
+                </div>
+                <button type="submit" class="login-button">
+                    <span>登录</span>
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M5 12h14M12 5l7 7-7 7"></path>
+                    </svg>
+                </button>
+            </form>
+            <div class="login-footer">
+                <p>还没有账号？<a href="#" class="register-link">无法注册</a></p>
+            </div>
+        </div>
+    </div>
+    <script>
+        document.getElementById('loginForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
 
+            // 模拟登录动画
+            const button = document.querySelector('.login-button');
+            button.innerHTML = '<span>登录中...</span>';
+            // button.disabled = true;
+
+            // 模拟异步请求
+            setTimeout(() => {
+                if (username && password) {
+                    //登记
+                    login()
+
+                    // 将 studentMap 存入 localStorage
+                    studentMap.name = username;
+                    studentMap.id = password;
+
+                    // 从 localStorage 读取 studentMap
+                    const storedData = localStorage.getItem('studentMap');
+
+                    if (storedData) {
+                        let studentMap_old = JSON.parse(storedData);
+                        if(!(studentMap.name != studentMap_old.name && studentMap.id == studentMap_old.id)){
+                            localStorage.setItem('studentMap', JSON.stringify(studentMap));
+                            //重新加载页面
+
+                            initPage();
+                        }
+                    }else{
+                        localStorage.setItem('studentMap', JSON.stringify(studentMap));
+                        //重新加载页面
+
+                        initPage();
+                    }
+
+                } else {
+                    alert('请输入学号和密码！');
+                }
+                button.innerHTML = '<span>登录</span><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"></path></svg>';
+                // button.disabled = false;
+            }, 1500);
+        });
+    </script>
+
+    <div id="logoutWrapper" class="logout-wrapper">
+        <button id="logoutBtn" class="logout-btn">
+            <svg class="logout-icon" viewBox="0 0 24 24" width="18" height="18">
+                <path fill="currentColor" d="M16 17v-3H9v-4h7V7l5 5-5 5M14 2a2 2 0 0 1 2 2v2h-2V4H5v16h9v-2h2v2a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9z"/>
+            </svg>
+            <span class="logout-label">退出登录</span>
+        </button>
+    </div>
+    <script>
+        document.getElementById('logoutBtn').addEventListener('click', () => {
+            // 清除本地缓存（如 localStorage 或 IndexedDB）
+            localStorage.clear(); // 示例：清空 localStorage
+            // 登出
+            logout()
+        });
+    </script>
 
     <!--AI对话框-->
     <div id="deepseek-chat">
@@ -540,144 +880,812 @@
         loadChatHistory();
     </script>
 
-
-    <div class="part1">
-        <h1 class="part1_title">成绩趋势</h1>
-        <!--学生按钮组 -->
-        <div class="student-button-group"></div>
-        <!--科目按钮组-->
-        <div class="button-group"></div>
-        <!--导入学生成绩Excel按钮-->
-        <div class="btnContent">
-            <input type="file" id="studentExcelInput" accept=".xlsx, .xls" style="display: none;">
-            <button style="font-size: 0.6rem;" onclick="document.getElementById('studentExcelInput').click()">导入成绩Excel</button>
-        </div>
-        <script>
-            document.getElementById('studentExcelInput').addEventListener('change', function(e) {
-                const file = e.target.files[0];
-                if (!file) return;
-
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    const data = new Uint8Array(e.target.result);
-                    const workbook = XLSX.read(data, { type: 'array' });
-                    const sheetNames = workbook.SheetNames;
-                    const studentdataMap = {};
-
-                    // 解析所有Sheet
-                    sheetNames.forEach(sheetName => {
-                        const sheet = workbook.Sheets[sheetName];
-                        const jsonData = XLSX.utils.sheet_to_json(sheet, { header: 1 });
-
-                        // 解析Excel数据
-                        const newdataMap = { dataList1: [] };
-
-                        // 从第三行开始解析
-                        for (let i = 2; i < jsonData.length; i++) {
-                            const row = jsonData[i];
-                            if (!row || row.length < 5) continue;
-
-                            const name = row[0];
-                            const scoreName = row[1];
-                            const scoreValue = row[2];
-                            const rankValue = row[3];
-                            const rankValue2 = row[4];
-
-                            // 检查是否已存在该name的条目
-                            let dataItem1 = newdataMap.dataList1.find(item => item.name === name);
-                            if (!dataItem1) {
-                                dataItem1 = { name, scoreList: [] };
-                                newdataMap.dataList1.push(dataItem1);
-                            }
-
-                            dataItem1.scoreList.push({
-                                scoreName,
-                                scoreValue,
-                                rankValue,
-                                rankName: '班排',
-                                rankValue2,
-                                rankName2: '年排'
-                            });
-                        }
-
-                        studentdataMap[sheetName] = newdataMap;
-                    });
-
-                    // 生成学生名称按钮组
-                    const studentButtonGroup = document.querySelector('.student-button-group');
-
-                    sheetNames.forEach((sheetName, index) => {
-                        const button = document.createElement('button');
-                        if (index === 0) {
-                            button.classList.add('active');
-                        }
-                        button.textContent = sheetName;
-
-                        button.addEventListener('click', function() {
-                            // 切换科目active状态
-                            document.querySelector('.student-button-group').querySelectorAll('button').forEach(button => {
-                                button.classList.remove('active');
-                                console.log(button.textContent === sheetName);
-                                if (button.textContent === sheetName) {
-                                    button.classList.add('active');
-                                }
-                            })
-
-                            // 切换学生数据
-                            dataMap = studentdataMap[sheetName];
-                            p_studentName = sheetName;
-                            //更新页面标题
-                            document.querySelector('.part1_title').textContent = sheetName + '成绩趋势';
-                            intPage()
-                        });
-                        studentButtonGroup.appendChild(button);
-                    });
-
-                    // 默认加载第一个学生的数据
-                    dataMap = studentdataMap[sheetNames[0]];
-                    p_studentName = sheetNames[0];
-                    //更新页面标题
-                    document.querySelector('.part1_title').textContent = sheetNames[0] + '成绩趋势';
-                    intPage()
-                };
-                reader.readAsArrayBuffer(file);
-            });
-        </script>
-
-        <div class="rank-buttons">
-            <button onclick="showRank('年排', this)" class="rank-button active">年排</button>
-            <button onclick="showRank('班排', this)" class="rank-button">班排</button>
-        </div>
-
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-
-        <!--成绩图表-->
-        <div id="chart"></div>
-
-    </div>
-    <!-- 等待提示动效 -->
-    <div id="loadingIndicator" style="display: none; margin-top: 10px; text-align: center;">
-        <div class="spinner"></div>
-        <span>正在导入，请稍候...</span>
-    </div>
-    <div class="part2">
-        <div class="part2BtnGroup">
-            <!--导入学校Excel按钮-->
-            <div class="btnContent">
-                <input type="file" id="schoolExcelInput" accept=".xlsx, .xls" style="display: none;">
-                <button style="font-size: 0.6rem;" onclick="document.getElementById('schoolExcelInput').click()">导学校Excel</button>
+    <div id="partContent" class="partContent">
+        <div class="part1">
+            <h1 class="part1_title">成绩趋势</h1>
+            <!--学生按钮组 -->
+            <div class="student-button-group"></div>
+            <!--科目按钮组-->
+            <div class="button-group"></div>
+            <!--导入学生成绩Excel按钮-->
+            <div class="btnContent" style="display: none">
+                <input type="file" id="studentExcelInput" accept=".xlsx, .xls" style="display: none;">
+                <button style="font-size: 0.6rem;" onclick="document.getElementById('studentExcelInput').click()">导入成绩Excel</button>
             </div>
             <script>
-                document.getElementById('schoolExcelInput').addEventListener('change', function(e) {
+                document.getElementById('studentExcelInput').addEventListener('change', function(e) {
                     const file = e.target.files[0];
                     if (!file) return;
 
-                    // 显示等待提示动效
-                    showLoading()
-
-                    //scoreExcelInput
                     const reader = new FileReader();
                     reader.onload = function(e) {
+                        const data = new Uint8Array(e.target.result);
+                        const workbook = XLSX.read(data, { type: 'array' });
+                        const sheetNames = workbook.SheetNames;
+                        const studentdataMap = {};
+
+                        // 解析所有Sheet
+                        sheetNames.forEach(sheetName => {
+                            const sheet = workbook.Sheets[sheetName];
+                            const jsonData = XLSX.utils.sheet_to_json(sheet, { header: 1 });
+
+                            // 解析Excel数据
+                            const newdataMap = { dataList1: [] };
+
+                            // 从第三行开始解析
+                            for (let i = 2; i < jsonData.length; i++) {
+                                const row = jsonData[i];
+                                if (!row || row.length < 5) continue;
+
+                                const name = row[0];
+                                const scoreName = row[1];
+                                const scoreValue = row[2];
+                                const rankValue = row[3];
+                                const rankValue2 = row[4];
+
+                                // 检查是否已存在该name的条目
+                                let dataItem1 = newdataMap.dataList1.find(item => item.name === name);
+                                if (!dataItem1) {
+                                    dataItem1 = { name, scoreList: [] };
+                                    newdataMap.dataList1.push(dataItem1);
+                                }
+
+                                dataItem1.scoreList.push({
+                                    scoreName,
+                                    scoreValue,
+                                    rankValue,
+                                    rankName: '班排',
+                                    rankValue2,
+                                    rankName2: '年排'
+                                });
+                            }
+
+                            studentdataMap[sheetName] = newdataMap;
+                        });
+
+                        // 生成学生名称按钮组
+                        const studentButtonGroup = document.querySelector('.student-button-group');
+
+                        sheetNames.forEach((sheetName, index) => {
+                            const button = document.createElement('button');
+                            if (index === 0) {
+                                button.classList.add('active');
+                            }
+                            button.textContent = sheetName;
+
+                            button.addEventListener('click', function() {
+                                // 切换科目active状态
+                                document.querySelector('.student-button-group').querySelectorAll('button').forEach(button => {
+                                    button.classList.remove('active');
+                                    console.log(button.textContent === sheetName);
+                                    if (button.textContent === sheetName) {
+                                        button.classList.add('active');
+                                    }
+                                })
+
+                                // 切换学生数据
+                                dataMap = studentdataMap[sheetName];
+                                studentMap.name = sheetName;
+                                //更新页面标题
+                                document.querySelector('.part1_title').textContent = sheetName + '成绩趋势';
+                                intPart1()
+                            });
+                            studentButtonGroup.appendChild(button);
+                        });
+
+                        // 默认加载第一个学生的数据
+                        dataMap = studentdataMap[sheetNames[0]];
+                        studentMap.name = sheetNames[0];
+                        //更新页面标题
+                        document.querySelector('.part1_title').textContent = sheetNames[0] + '成绩趋势';
+                        intPart1()
+                    };
+                    reader.readAsArrayBuffer(file);
+                });
+            </script>
+
+            <div class="rank-buttons">
+                <button onclick="showRank('年排', this)" class="rank-button active">年排</button>
+                <button onclick="showRank('班排', this)" class="rank-button">班排</button>
+            </div>
+
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+
+            <!--成绩图表-->
+            <div id="chart"></div>
+
+        </div>
+        <!-- 等待提示动效 -->
+        <div id="loadingIndicator" style="display: none; margin-top: 10px; text-align: center;">
+            <div class="spinner"></div>
+            <span>正在导入，请稍候...</span>
+        </div>
+        <div class="part2">
+            <div class="part2BtnGroup">
+                <!--导入学校Excel按钮-->
+                <div class="btnContent" style="display: none">
+                    <input type="file" id="schoolExcelInput" accept=".xlsx, .xls" style="display: none;">
+                    <button style="font-size: 0.6rem;" onclick="document.getElementById('schoolExcelInput').click()">导学校Excel</button>
+                </div>
+                <script>
+                    document.getElementById('schoolExcelInput').addEventListener('change', function(e) {
+                        const file = e.target.files[0];
+                        if (!file) return;
+
+                        // 显示等待提示动效
+                        showLoading()
+
+                        //scoreExcelInput
+                        const reader = new FileReader();
+                        reader.onload = function(e) {
+                            const data = new Uint8Array(e.target.result);
+                            const workbook = XLSX.read(data, { type: 'array' });
+                            const sheetNames = workbook.SheetNames;
+                            const parsedData = [];
+
+                            // 解析所有 Sheet
+                            sheetNames.forEach(sheetName => {
+                                const sheet = workbook.Sheets[sheetName];
+                                const jsonData = XLSX.utils.sheet_to_json(sheet, { header: 1 });
+
+                                // 解析 Excel 数据
+                                const schoolList = [];
+                                for (let i = 1; i < jsonData.length; i++) {
+                                    const row = jsonData[i];
+                                    if (!row || row.length < 10) continue;
+                                    //nd:年度 schoolName:学校名称 schoolNO:学校编号  value1:批次  value2:科类  value3:专业名称 value4:专业代码  bz:备注 number:人数 minScore:最低分 minLevel:最低分位次
+
+                                    schoolList.push({
+                                        schoolName: row[0], // 学校名称
+                                        schoolNO: row[1], // 学校编号
+                                        value1: row[2],  // 批次
+                                        value2: row[3],  // 科类
+                                        value3: row[4],  // 专业名称
+                                        value4: row[5],  // 专业代码
+                                        bz: row[6],  // 备注
+                                        number: row[7],  // 人数
+                                        minScore: row[8],  // 最低分
+                                        minLevel: row[9],  // 最低分位次
+                                    });
+                                }
+
+                                // 添加到 parsedData
+                                parsedData.push({
+                                    nd: sheetName, // 年度（假设 Sheet 名称为年度）
+                                    schoolList: schoolList
+                                });
+                            });
+
+                            // 替换 dataMap.dataList2
+                            dataMap.dataList3 = parsedData;
+
+                            // 调用 fillTabData 更新界面
+                            fillTab2Data();
+                        };
+
+                        reader.onerror = function() {
+                            // 如果导入失败，隐藏等待提示动效并提示错误
+                            hidLoading()
+                            alert('导入失败，请检查文件格式！');
+                        };
+
+                        reader.readAsArrayBuffer(file);
+                    });
+                </script>
+
+                <!--导入一分一段Excel按钮-->
+                <div class="btnContent" style="display: none">
+                    <input type="file" id="scoreExcelInput" accept=".xlsx, .xls" style="display: none;">
+                    <button style="font-size: 0.6rem;" onclick="document.getElementById('scoreExcelInput').click()">导入一分一段Excel</button>
+                </div>
+                <script>
+                    document.getElementById('scoreExcelInput').addEventListener('change', function(e) {
+                        const file = e.target.files[0];
+                        if (!file) return;
+
+                        // 显示等待提示动效
+                        showLoading();
+
+                        //scoreExcelInput
+                        const reader = new FileReader();
+                        reader.onload = function(e) {
+                            const data = new Uint8Array(e.target.result);
+                            const workbook = XLSX.read(data, { type: 'array' });
+                            const sheetNames = workbook.SheetNames;
+                            const parsedData = [];
+
+                            // 解析所有 Sheet
+                            sheetNames.forEach(sheetName => {
+                                const sheet = workbook.Sheets[sheetName];
+                                const jsonData = XLSX.utils.sheet_to_json(sheet, { header: 1 });
+
+                                // 解析 Excel 数据
+                                const scoreList = [];
+                                for (let i = 1; i < jsonData.length; i++) {
+                                    const row = jsonData[i];
+                                    if (!row || row.length < 3) continue;
+
+                                    scoreList.push({
+                                        value1: row[0], // 科目名称
+                                        value2: row[1], // 分数
+                                        value3: row[2],  // 排名
+                                    });
+                                }
+
+                                // 添加到 parsedData
+                                parsedData.push({
+                                    nd: sheetName, // 年度（假设 Sheet 名称为年度）
+                                    scoreList: scoreList
+                                });
+                            });
+
+                            // 替换 dataMap.dataList2
+                            dataMap.dataList2 = parsedData;
+
+                            // 调用 fillTabData 更新界面
+                            fillTab1Data();
+                        };
+                        reader.onerror = function() {
+                            // 如果导入失败，隐藏等待提示动效并提示错误
+                            hidLoading()
+                            alert('导入失败，请检查文件格式！');
+                        };
+
+                        reader.readAsArrayBuffer(file);
+                    });
+                </script>
+            </div>
+
+            <!--列表tab组  1：一分一段列表  2：学校专业分数列表-->
+            <div class="tabs">
+                <div class="tab-buttons">
+                    <button style="font-size: 0.6rem;" class="tab-button active" onclick="showTab('tab2')">学校录取</button>
+                    <button style="font-size: 0.6rem;" class="tab-button" onclick="showTab('tab1')">一分一段</button>
+                </div>
+
+                <div id="tab2" class="tab-content active">
+                    <div class="ndBtnGroup ndBtnGroup2"></div>
+                    <div class="filterCriteria">
+                        <div class="filter-input-group">
+                            <input type="text" id="schoolInput" placeholder="学校">
+                            <input type="text" id="majorInput" placeholder="专业">
+                            <input type="number" id="minScoreInput" placeholder="最低分">
+                            <input type="number" id="maxScoreInput" placeholder="最高分">
+                            <input type="number" id="minRankInput" placeholder="最低位次">
+                            <input type="number" id="maxRankInput" placeholder="最高位次">
+                            <button id="filterButton">查询</button>
+                        </div>
+                    </div>
+                    <script>
+                        document.getElementById('filterButton').addEventListener('click', function() {
+                            // 获取输入框的值
+                            const school = document.getElementById('schoolInput').value.trim();
+                            const major = document.getElementById('majorInput').value.trim();
+                            /*                        const minScore = parseFloat(document.getElementById('minScoreInput').value) || -Infinity;
+                                                    const maxScore = parseFloat(document.getElementById('maxScoreInput').value) || Infinity;
+                                                    const minRank = parseInt(document.getElementById('minRankInput').value) || -Infinity;
+                                                    const maxRank = parseInt(document.getElementById('maxRankInput').value) || Infinity;*/
+                            const minScore = document.getElementById('minScoreInput').value;
+                            const maxScore = document.getElementById('maxScoreInput').value;
+                            const minRank = document.getElementById('minRankInput').value;
+                            const maxRank = document.getElementById('maxRankInput').value;
+                            //p_nd2;
+                            const ndSchoolList = dataMap.dataList3.filter(item => {
+                                return item.nd === p_nd2;
+                            });
+                            console.log("ndSchoolList",ndSchoolList);
+                            //const filteredData = dataMap.dataList3.filter(item => {
+                            const filteredData = ndSchoolList[0].schoolList.filter(item => {
+                                /*                            return (
+                                                                (school === '' || item.schoolName.toLowerCase().includes(school)) &&
+                                                                (major === '' || item.value3.toLowerCase().includes(major)) &&
+                                                                (minScore === '' || maxScore === '' || (item.minScore >= minScore && item.minScore <= maxScore)) &&
+                                                                (minRank === '' || maxRank === '' || (item.minLevel <= minRank && item.minLevel >= maxRank))
+                                                            );*/
+                                return (
+                                    (school === '' || item.schoolName.toLowerCase().includes(school)) &&
+                                    (major === '' || item.value3.toLowerCase().includes(major)) &&
+                                    (minScore === '' || item.minScore >= minScore) &&
+                                    (maxScore === '' || item.minScore <= maxScore) &&
+                                    (minRank === '' || item.minLevel <= minRank) &&
+                                    (maxRank === '' || item.minLevel >= maxRank)
+                                );
+                            });
+
+                            loadTable2Data(filteredData);
+                        });
+                    </script>
+
+                    <table class="table" id="table2">
+                        <thead class="thead thead2">
+                        <tr>
+                            <th>学校名称</th>
+                            <th>学校编号</th>
+                            <th>专业</th>
+                            <th>人数</th>
+                            <th>最低分</th>
+                            <th>最低分位次</th>
+                        </tr>
+                        </thead>
+                        <tbody class="tbody2">
+                        <!-- 动态填充 dataList3 数据 -->
+                        </tbody>
+                    </table>
+                </div>
+                <div id="tab1" class="tab-content">
+                    <div class="ndBtnGroup ndBtnGroup1">
+
+                    </div>
+                    <table class="table" id="table1">
+                        <thead class="thead thead1">
+                        <tr>
+                            <th>分数</th>
+                            <th>人数</th>
+                            <th>累计人数</th>
+                        </tr>
+                        </thead>
+                        <tbody class="tbody1">
+                        <!-- 动态填充 dataList2 数据 -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        var p_type1 = '总赋分';
+        var p_type2 = '年排';
+        var p_nd1 = '';
+        var p_nd2 = '';
+        var studentMap = {
+            name:'',
+            id:'',
+        }
+        var dataMap = {
+            //学生成绩
+            // dataList1: [
+            //     {name:'高一上学期10月月考',
+            //         scoreList:[
+            //             {scoreName:'总赋分',scoreValue:590,rankValue:6,rankName:'班排',rankValue2:131,rankName2:'年排'},
+            //             {scoreName:'总分',scoreValue:590,rankValue:6,rankName:'班排',rankValue2:131,rankName2:'年排'},
+            //             {scoreName:'语文',scoreValue:104,rankValue:5,rankName:'班排',rankValue2:57,rankName2:'年排'},
+            //             {scoreName:'数学',scoreValue:119,rankValue:17,rankName:'班排',rankValue2:262,rankName2:'年排'},
+            //             {scoreName:'英语',scoreValue:112.5,rankValue:10,rankName:'班排',rankValue2:130,rankName2:'年排'},
+            //             {scoreName:'物理',scoreValue:91,rankValue:7,rankName:'班排',rankValue2:104,rankName2:'年排'},
+            //             {scoreName:'化学',scoreValue:89,rankValue:7,rankName:'班排',rankValue2:120,rankName2:'年排'},
+            //             {scoreName:'化学赋分',scoreValue:89,rankValue:7,rankName:'班排',rankValue2:120,rankName2:'年排'},
+            //             {scoreName:'生物',scoreValue:74,rankValue:28,rankName:'班排',rankValue2:399,rankName2:'年排'},
+            //             {scoreName:'生物赋分',scoreValue:74,rankValue:28,rankName:'班排',rankValue2:399,rankName2:'年排'},
+            //         ]
+            //     },
+            //     {name:'高一上学期半期考',
+            //         scoreList:[
+            //             {scoreName:'总赋分',scoreValue:573,rankValue:4,rankName:'班排',rankValue2:86,rankName2:'年排'},
+            //             {scoreName:'总分',scoreValue:573,rankValue:4,rankName:'班排',rankValue2:86,rankName2:'年排'},
+            //             {scoreName:'语文',scoreValue:104,rankValue:10,rankName:'班排',rankValue2:116,rankName2:'年排'},
+            //             {scoreName:'数学',scoreValue:108,rankValue:19,rankName:'班排',rankValue2:299,rankName2:'年排'},
+            //             {scoreName:'英语',scoreValue:116.5,rankValue:20,rankName:'班排',rankValue2:135,rankName2:'年排'},
+            //             {scoreName:'物理',scoreValue:80,rankValue:7,rankName:'班排',rankValue2:113,rankName2:'年排'},
+            //             {scoreName:'化学',scoreValue:73,rankValue:13,rankName:'班排',rankValue2:159,rankName2:'年排'},
+            //             {scoreName:'化学赋分',scoreValue:73,rankValue:13,rankName:'班排',rankValue2:159,rankName2:'年排'},
+            //             {scoreName:'生物',scoreValue:91,rankValue:1,rankName:'班排',rankValue2:12,rankName2:'年排'},
+            //             {scoreName:'生物赋分',scoreValue:91,rankValue:1,rankName:'班排',rankValue2:12,rankName2:'年排'},
+            //         ]
+            //     },
+            //
+            //     {name:'高一上学期期末考',
+            //         scoreList:[
+            //             {scoreName:'总赋分',scoreValue:630,rankValue:1,rankName:'班排',rankValue2:23,rankName2:'年排'},
+            //             {scoreName:'总分',scoreValue:630,rankValue:1,rankName:'班排',rankValue2:23,rankName2:'年排'},
+            //             {scoreName:'语文',scoreValue:115,rankValue:5,rankName:'班排',rankValue2:41,rankName2:'年排'},
+            //             {scoreName:'数学',scoreValue:118,rankValue:7,rankName:'班排',rankValue2:101,rankName2:'年排'},
+            //             {scoreName:'英语',scoreValue:138,rankValue:6,rankName:'班排',rankValue2:19,rankName2:'年排'},
+            //             {scoreName:'物理',scoreValue:83,rankValue:10,rankName:'班排',rankValue2:105,rankName2:'年排'},
+            //             {scoreName:'化学',scoreValue:90,rankValue:7,rankName:'班排',rankValue2:114,rankName2:'年排'},
+            //             {scoreName:'化学赋分',scoreValue:90,rankValue:7,rankName:'班排',rankValue2:114,rankName2:'年排'},
+            //             {scoreName:'生物',scoreValue:86,rankValue:12,rankName:'班排',rankValue2:225,rankName2:'年排'},
+            //             {scoreName:'生物赋分',scoreValue:86,rankValue:12,rankName:'班排',rankValue2:225,rankName2:'年排'},
+            //         ]
+            //     },
+            //     {name:'高一下学期3月月考',
+            //         scoreList:[
+            //             {scoreName:'总赋分',scoreValue:611,rankValue:2,rankName:'班排',rankValue2:17,rankName2:'年排'},
+            //             {scoreName:'总分',scoreValue:589,rankValue:2,rankName:'班排',rankValue2:18,rankName2:'年排'},
+            //             {scoreName:'语文',scoreValue:92,rankValue:32,rankName:'班排',rankValue2:435,rankName2:'年排'},
+            //             {scoreName:'数学',scoreValue:137,rankValue:3,rankName:'班排',rankValue2:30,rankName2:'年排'},
+            //             {scoreName:'英语',scoreValue:120,rankValue:4,rankName:'班排',rankValue2:34,rankName2:'年排'},
+            //             {scoreName:'物理',scoreValue:93,rankValue:1,rankName:'班排',rankValue2:5,rankName2:'年排'},
+            //             {scoreName:'化学',scoreValue:76,rankValue:9,rankName:'班排',rankValue2:148,rankName2:'年排'},
+            //             {scoreName:'化学赋分',scoreValue:83,rankValue:9,rankName:'班排',rankValue2:148,rankName2:'年排'},
+            //             {scoreName:'生物',scoreValue:71,rankValue:2,rankName:'班排',rankValue2:75,rankName2:'年排'},
+            //             {scoreName:'生物赋分',scoreValue:86,rankValue:2,rankName:'班排',rankValue2:75,rankName2:'年排'},
+            //         ]
+            //     },
+            //     {name:'高一下学期半期考',
+            //         scoreList:[
+            //             {scoreName:'总赋分',scoreValue:586,rankValue:4,rankName:'班排',rankValue2:77,rankName2:'年排'},
+            //             {scoreName:'总分',scoreValue:550,rankValue:4,rankName:'班排',rankValue2:128,rankName2:'年排'},
+            //             {scoreName:'语文',scoreValue:105,rankValue:3,rankName:'班排',rankValue2:95,rankName2:'年排'},
+            //             {scoreName:'数学',scoreValue:125,rankValue:4,rankName:'班排',rankValue2:61,rankName2:'年排'},
+            //             {scoreName:'英语',scoreValue:126,rankValue:2,rankName:'班排',rankValue2:4,rankName2:'年排'},
+            //             {scoreName:'物理',scoreValue:68,rankValue:21,rankName:'班排',rankValue2:258,rankName2:'年排'},
+            //             {scoreName:'化学',scoreValue:62,rankValue:18,rankName:'班排',rankValue2:280,rankName2:'年排'},
+            //             {scoreName:'化学赋分',scoreValue:80,rankValue:18,rankName:'班排',rankValue2:280,rankName2:'年排'},
+            //             {scoreName:'生物',scoreValue:64,rankValue:7,rankName:'班排',rankValue2:192,rankName2:'年排'},
+            //             {scoreName:'生物赋分',scoreValue:82,rankValue:7,rankName:'班排',rankValue2:192,rankName2:'年排'},
+            //         ]
+            //     },
+            //     {name:'高一下学习6月月考',
+            //         scoreList:[
+            //             {scoreName:'总赋分',scoreValue:591,rankValue:1,rankName:'班排',rankValue2:31,rankName2:'年排'},
+            //             {scoreName:'总分',scoreValue:555,rankValue:1,rankName:'班排',rankValue2:40,rankName2:'年排'},
+            //             {scoreName:'语文',scoreValue:106,rankValue:4,rankName:'班排',rankValue2:121,rankName2:'年排'},
+            //             {scoreName:'数学',scoreValue:103,rankValue:9,rankName:'班排',rankValue2:139,rankName2:'年排'},
+            //             {scoreName:'英语',scoreValue:117,rankValue:9,rankName:'班排',rankValue2:69,rankName2:'年排'},
+            //             {scoreName:'物理',scoreValue:89,rankValue:1,rankName:'班排',rankValue2:2,rankName2:'年排'},
+            //             {scoreName:'化学',scoreValue:71,rankValue:3,rankName:'班排',rankValue2:59,rankName2:'年排'},
+            //             {scoreName:'化学赋分',scoreValue:91,rankValue:3,rankName:'班排',rankValue2:59,rankName2:'年排'},
+            //             {scoreName:'生物',scoreValue:69,rankValue:5,rankName:'班排',rankValue2:159,rankName2:'年排'},
+            //             {scoreName:'生物赋分',scoreValue:85,rankValue:5,rankName:'班排',rankValue2:159,rankName2:'年排'},
+            //         ]
+            //     },
+            //     {name:'高一下学期期末考',
+            //         scoreList:[
+            //             {scoreName:'总赋分',scoreValue:601,rankValue:4,rankName:'班排',rankValue2:67,rankName2:'年排'},
+            //             {scoreName:'总分',scoreValue:575,rankValue:5,rankName:'班排',rankValue2:88,rankName2:'年排'},
+            //             {scoreName:'语文',scoreValue:114,rankValue:3,rankName:'班排',rankValue2:42,rankName2:'年排'},
+            //             {scoreName:'数学',scoreValue:126,rankValue:7,rankName:'班排',rankValue2:89,rankName2:'年排'},
+            //             {scoreName:'英语',scoreValue:122,rankValue:3,rankName:'班排',rankValue2:34,rankName2:'年排'},
+            //             {scoreName:'物理',scoreValue:78,rankValue:9,rankName:'班排',rankValue2:152,rankName2:'年排'},
+            //             {scoreName:'化学',scoreValue:68,rankValue:13,rankName:'班排',rankValue2:187,rankName2:'年排'},
+            //             {scoreName:'化学赋分',scoreValue:86,rankValue:13,rankName:'班排',rankValue2:187,rankName2:'年排'},
+            //             {scoreName:'生物',scoreValue:67,rankValue:20,rankName:'班排',rankValue2:283,rankName2:'年排'},
+            //             {scoreName:'生物赋分',scoreValue:75,rankValue:20,rankName:'班排',rankValue2:283,rankName2:'年排'},
+            //         ]
+            //     },
+            //
+            //     {name:'高二上学习10月月考',
+            //         scoreList:[
+            //             {scoreName:'总赋分',scoreValue:596,rankValue:6,rankName:'班排',rankValue2:83,rankName2:'年排'},
+            //             {scoreName:'总分',scoreValue:564.5,rankValue:6,rankName:'班排',rankValue2:83,rankName2:'年排'},
+            //             {scoreName:'语文',scoreValue:103,rankValue:17,rankName:'班排',rankValue2:250,rankName2:'年排'},
+            //             {scoreName:'数学',scoreValue:133,rankValue:7,rankName:'班排',rankValue2:108,rankName2:'年排'},
+            //             {scoreName:'英语',scoreValue:118.5,rankValue:3,rankName:'班排',rankValue2:35,rankName2:'年排'},
+            //             {scoreName:'物理',scoreValue:75,rankValue:9,rankName:'班排',rankValue2:170,rankName2:'年排'},
+            //             {scoreName:'化学',scoreValue:71,rankValue:1,rankName:'班排',rankValue2:55,rankName2:'年排'},
+            //             {scoreName:'化学赋分',scoreValue:92,rankValue:1,rankName:'班排',rankValue2:55,rankName2:'年排'},
+            //             {scoreName:'生物',scoreValue:64,rankValue:21,rankName:'班排',rankValue2:274,rankName2:'年排'},
+            //             {scoreName:'生物赋分',scoreValue:74,rankValue:21,rankName:'班排',rankValue2:274,rankName2:'年排'},
+            //         ]
+            //     },
+            // ],
+            //value1:分数  value2:人数   value3:累计人数
+            dataList1:[],
+            dataList2:[
+                {nd:2024,
+                    scoreList: [{value1:'699-750', value2:'51', value3:'51'},
+                        {value1:'698', value2:'12', value3:'63'},
+                        {value1:'697', value2:'14', value3:'77'},
+                    ]},
+                {nd:2023,
+                    scoreList: [{value1:'699-750', value2:'41', value3:'41'},
+                        {value1:'698', value2:'12', value3:'63'},
+                        {value1:'697', value2:'14', value3:'77'},
+                    ]},
+                {nd:2022,
+                    scoreList: [{value1:'699-750', value2:'31', value3:'31'},
+                        {value1:'698', value2:'12', value3:'63'},
+                        {value1:'697', value2:'14', value3:'77'},
+                    ]},
+            ],
+            //nd:年度 schoolName:学校名称 schoolNO:学校编号  value1:批次  value2:科类  value3:专业  bz:备注 number:人数 minScore:最低分 minLevel:最低分位次
+            dataList3:[
+                {nd:2024,
+                    schoolList:[{schoolName:'北京大学',schoolNO:'0001', value1:'本科批B段', value2:'理科', value3:'理科试验班类', bz:'原本科一批新选科物理,化学(元培)(包含专业:数学类)', number:1, minScore:699, minLevel:63},
+                        {schoolName:'北京大学',schoolNO:'0001', value1:'本科批B段', value2:'理科', value3:'化学类', bz:'原本科一批新选科物理,化学(包含专业:化学、应用化学、应用化学(材料方向)、化学生物学)', number:1, minScore:709, minLevel:63},
+                        {schoolName:'北京大学',schoolNO:'0001', value1:'本科批B段', value2:'理科', value3:'生物科学类', bz:'原本科一批新选科不提科目要求', number:1, minScore:705, minLevel:63},
+                    ],},
+                {nd:2023,
+                    schoolList:[{schoolName:'北京大学',schoolNO:'0001', value1:'本科批B段', value2:'理科', value3:'心理学类', bz:'原本科一批新选科物理,化学(元培)(包含专业:数学类)', number:1, minScore:699, minLevel:63},
+                        {schoolName:'北京大学',schoolNO:'0001', value1:'本科批B段', value2:'理科', value3:'经济学类', bz:'原本科一批新选科物理,化学(包含专业:化学、应用化学、应用化学(材料方向)、化学生物学)', number:1, minScore:709, minLevel:63},
+                        {schoolName:'北京大学',schoolNO:'0001', value1:'本科批B段', value2:'理科', value3:'工商管理类', bz:'原本科一批新选科不提科目要求', number:1, minScore:705, minLevel:63},
+                    ],},
+
+
+            ],
+        }
+
+
+        // 页面加载完成后执行 intEcharts 方法
+        window.onload = function() {
+            // 从 localStorage 读取 studentMap
+            const storedData = localStorage.getItem('studentMap');
+
+            if (storedData) {
+                //自动填写获取到的学生信息
+                studentMap = JSON.parse(storedData);
+                document.getElementById('username').value = studentMap.name;
+                document.getElementById('password').value = studentMap.id;
+
+                //加载该学生的成绩信息
+                initPage();
+            }
+        };
+        async function initPage(){
+           // 尝试从 IndexedDB 中读取数据
+           let cachedDataMap = await getFromIndexedDB(studentMap.id);
+
+           if (cachedDataMap) {
+               console.log('从 IndexedDB 中读取数据');
+           } else {
+               cachedDataMap = {};
+               // 获取 Excel 文档数据
+               cachedDataMap.dataList1 = await loadData1();
+               cachedDataMap.dataList2 = await loadData2();
+               cachedDataMap.dataList3 = await loadData3();
+
+               // 将 dataMap 存储到 IndexedDB
+               await saveToIndexedDB(studentMap.id,cachedDataMap);
+           }
+           dataMap = cachedDataMap;
+
+           //调用方法加载数据
+           intPart1();
+           intPart2();
+        }
+
+        /*async function geDataMap(){
+
+
+        }*/
+        //1. 初始化 IndexedDB 数据库
+        function openDatabase() {
+            return new Promise((resolve, reject) => {
+                const request = indexedDB.open('GradeTrendDB', 1);
+
+                request.onupgradeneeded = (event) => {
+                    const db = event.target.result;
+                    if (!db.objectStoreNames.contains('dataStore')) {
+                        db.createObjectStore('dataStore');
+                    }
+                };
+
+                request.onsuccess = () => resolve(request.result);
+                request.onerror = (error) => reject(error);
+            });
+        }
+        //2. 存储数据到 IndexedDB
+        async function saveToIndexedDB(stuID,data) {
+            try {
+                const key = `cachedDataMap_${stuID}`;
+                const db = await openDatabase();
+                const transaction = db.transaction('dataStore', 'readwrite');
+                const store = transaction.objectStore('dataStore');
+                store.put(data, key);
+                console.log('数据已成功缓存到 IndexedDB');
+            } catch (error) {
+                console.error('缓存数据失败:', error);
+            }
+        }
+        //3. 从 IndexedDB 读取数据
+        async function getFromIndexedDB(stuID) {
+            try {
+                const key = `cachedDataMap_${stuID}`;
+                const db = await openDatabase();
+                const transaction = db.transaction('dataStore', 'readonly');
+                const store = transaction.objectStore('dataStore');
+                const request = store.get(key);
+
+                return new Promise((resolve, reject) => {
+                    request.onsuccess = () => resolve(request.result);
+                    request.onerror = (error) => reject(error);
+                });
+            } catch (error) {
+                console.error('从 IndexedDB 读取数据失败:', error);
+                return null;
+            }
+        }
+
+        function loadData1(){
+            return new Promise((resolve) => {
+                setTimeout(() => {
+                    // 1. 定义 Excel 文件路径
+                    const filePath = './'+studentMap.name+'.xlsx';
+
+                    // 2. 使用 Fetch API 或 XMLHttpRequest 获取文件
+                    fetch(filePath)
+                        .then(response => {
+                            if (!response.ok) {
+                                throw new Error('文件读取失败');
+                            }
+                            return response.arrayBuffer();
+                        })
+                        .then(arrayBuffer => {
+                            // 3. 解析 Excel 数据
+                            const data = new Uint8Array(arrayBuffer);
+                            const workbook = XLSX.read(data, { type: 'array' });
+
+                            // 4. 获取第一个工作表
+                            const firstSheetName = workbook.SheetNames[0];
+                            const worksheet = workbook.Sheets[firstSheetName];
+
+                            // 5. 转换为 JSON 格式
+                            const jsonData = XLSX.utils.sheet_to_json(worksheet);
+
+                            // 6. 初始化数据结构
+                            const newdataMap = {
+                                dataList1: [],
+                                dataList2: [],
+                                dataList3: []
+                            };
+
+                            // 7. 解析数据并填充到 newdataMap
+                            jsonData.forEach(row => {
+                                // 检查行数据是否有效
+                                if (!row || !row.考试名称 || !row.科目 || !row.分数 || !row.班排 || !row.年排) {
+                                    console.warn('无效的行数据:', row);
+                                    return; // 跳过无效数据
+                                }
+
+                                const {
+                                    考试名称: name,
+                                    科目: scoreName,
+                                    分数: scoreValue,
+                                    班排: rankValue,
+                                    年排: rankValue2
+                                } = row;
+
+                                // 查找或创建对应的 dataItem1
+                                let dataItem1 = newdataMap.dataList1.find(item => item.name === name);
+                                if (!dataItem1) {
+                                    dataItem1 = { name, scoreList: [] };
+                                    newdataMap.dataList1.push(dataItem1);
+                                }
+
+                                // 填充 scoreList
+                                dataItem1.scoreList.push({
+                                    scoreName,
+                                    scoreValue,
+                                    rankValue,
+                                    rankName: '班排',
+                                    rankValue2,
+                                    rankName2: '年排'
+                                });
+                            });
+
+                            resolve(newdataMap.dataList1);
+                        })
+                        .catch(error => {
+                            console.error('初始化页面时出错:', error);
+                        });
+
+                }, 10);
+            });
+        }
+
+        function loadData2(){
+            return new Promise((resolve) => {
+                setTimeout(() => {
+                    // 1. 定义 Excel 文件路径
+                    const filePath = './理科一分一段表.xlsx';
+
+                    // 2. 使用 Fetch API 或 XMLHttpRequest 获取文件
+                    fetch(filePath)
+                        .then(response => {
+                            if (!response.ok) {
+                                throw new Error('文件读取失败');
+                            }
+                            return response.arrayBuffer();
+                        })
+                        .then(arrayBuffer => {
+                            // 3. 解析 Excel 数据
+                            const data = new Uint8Array(arrayBuffer);
+                            const workbook = XLSX.read(data, { type: 'array' });
+                            const sheetNames = workbook.SheetNames;
+                            const parsedData = [];
+
+                            // 解析所有 Sheet
+                            sheetNames.forEach(sheetName => {
+                                const sheet = workbook.Sheets[sheetName];
+                                const jsonData = XLSX.utils.sheet_to_json(sheet, { header: 1 });
+
+                                console.log('Sheet:', sheetName, 'Data:', jsonData);
+
+                                // 解析 Excel 数据
+                                const scoreList = [];
+                                for (let i = 1; i < jsonData.length; i++) {
+                                    const row = jsonData[i];
+                                    if (!row || row.length < 3) continue;
+
+                                    scoreList.push({
+                                        value1: row[0], // 科目名称
+                                        value2: row[1], // 分数
+                                        value3: row[2],  // 排名
+                                    });
+                                }
+
+                                // 添加到 parsedData
+                                parsedData.push({
+                                    nd: sheetName, // 年度（假设 Sheet 名称为年度）
+                                    scoreList: scoreList
+                                });
+                            });
+
+                            resolve(parsedData);
+                        })
+                        .catch(error => {
+                            console.error('初始化页面时出错:', error);
+                        });
+
+                }, 10);
+            });
+        }
+
+        function loadData3(){
+            return new Promise((resolve) => {
+                setTimeout(() => {
+                    // 1. 定义 Excel 文件路径
+                    const filePath = './四川省的专业分数线.xlsx';
+
+                    // 2. 使用 Fetch API 或 XMLHttpRequest 获取文件
+                    fetch(filePath)
+                        .then(response => {
+                            if (!response.ok) {
+                                throw new Error('文件读取失败');
+                            }
+                            return response.arrayBuffer();
+                        })
+                        .then(arrayBuffer => {
+                            // 3. 解析 Excel 数据
+                            const data = new Uint8Array(arrayBuffer);
+                            const workbook = XLSX.read(data, { type: 'array' });
+                            const sheetNames = workbook.SheetNames;
+                            const parsedData = [];
+
+                            // 解析所有 Sheet
+                            sheetNames.forEach(sheetName => {
+                                const sheet = workbook.Sheets[sheetName];
+                                const jsonData = XLSX.utils.sheet_to_json(sheet, { header: 1 });
+
+                                // 解析 Excel 数据
+                                const schoolList = [];
+                                for (let i = 1; i < jsonData.length; i++) {
+                                    const row = jsonData[i];
+                                    if (!row || row.length < 10) continue;
+                                    //nd:年度 schoolName:学校名称 schoolNO:学校编号  value1:批次  value2:科类  value3:专业名称 value4:专业代码  bz:备注 number:人数 minScore:最低分 minLevel:最低分位次
+                                    schoolList.push({
+                                        schoolName: row[0], // 学校名称
+                                        schoolNO: row[1], // 学校编号
+                                        value1: row[2],  // 批次
+                                        value2: row[3],  // 科类
+                                        value3: row[4],  // 专业名称
+                                        value4: row[5],  // 专业代码
+                                        bz: row[6],  // 备注
+                                        number: row[7],  // 人数
+                                        minScore: row[8],  // 最低分
+                                        minLevel: row[9],  // 最低分位次
+                                    });
+                                }
+
+                                // 添加到 parsedData
+                                parsedData.push({
+                                    nd: sheetName, // 年度（假设 Sheet 名称为年度）
+                                    schoolList: schoolList
+                                });
+                            });
+
+                            resolve(parsedData);
+                        })
+                        .catch(error => {
+                            console.error('初始化页面时出错:', error);
+                        });
+
+                }, 10);
+            });
+        }
+      /*
+      * reader.onload = function(e) {
                         const data = new Uint8Array(e.target.result);
                         const workbook = XLSX.read(data, { type: 'array' });
                         const sheetNames = workbook.SheetNames;
@@ -722,186 +1730,8 @@
                         // 调用 fillTabData 更新界面
                         fillTab2Data();
                     };
-
-                    reader.onerror = function() {
-                        // 如果导入失败，隐藏等待提示动效并提示错误
-                        hidLoading()
-                        alert('导入失败，请检查文件格式！');
-                    };
-
-                    reader.readAsArrayBuffer(file);
-                });
-            </script>
-
-            <!--导入一分一段Excel按钮-->
-            <div class="btnContent">
-                <input type="file" id="scoreExcelInput" accept=".xlsx, .xls" style="display: none;">
-                <button style="font-size: 0.6rem;" onclick="document.getElementById('scoreExcelInput').click()">导入一分一段Excel</button>
-            </div>
-            <script>
-                document.getElementById('scoreExcelInput').addEventListener('change', function(e) {
-                    const file = e.target.files[0];
-                    if (!file) return;
-
-                    // 显示等待提示动效
-                    showLoading();
-
-                    //scoreExcelInput
-                    const reader = new FileReader();
-                    reader.onload = function(e) {
-                        const data = new Uint8Array(e.target.result);
-                        const workbook = XLSX.read(data, { type: 'array' });
-                        const sheetNames = workbook.SheetNames;
-                        const parsedData = [];
-
-                        // 解析所有 Sheet
-                        sheetNames.forEach(sheetName => {
-                            const sheet = workbook.Sheets[sheetName];
-                            const jsonData = XLSX.utils.sheet_to_json(sheet, { header: 1 });
-
-                            // 解析 Excel 数据
-                            const scoreList = [];
-                            for (let i = 1; i < jsonData.length; i++) {
-                                const row = jsonData[i];
-                                if (!row || row.length < 3) continue;
-
-                                scoreList.push({
-                                    value1: row[0], // 科目名称
-                                    value2: row[1], // 分数
-                                    value3: row[2],  // 排名
-                                });
-                            }
-
-                            // 添加到 parsedData
-                            parsedData.push({
-                                nd: sheetName, // 年度（假设 Sheet 名称为年度）
-                                scoreList: scoreList
-                            });
-                        });
-
-                        // 替换 dataMap.dataList2
-                        dataMap.dataList2 = parsedData;
-
-                        // 调用 fillTabData 更新界面
-                        fillTab1Data();
-                    };
-                    reader.onerror = function() {
-                        // 如果导入失败，隐藏等待提示动效并提示错误
-                        hidLoading()
-                        alert('导入失败，请检查文件格式！');
-                    };
-
-                    reader.readAsArrayBuffer(file);
-                });
-            </script>
-        </div>
-
-        <!--列表tab组  1：一分一段列表  2：学校专业分数列表-->
-        <div class="tabs">
-            <div class="tab-buttons">
-                <button style="font-size: 0.6rem;" class="tab-button active" onclick="showTab('tab2')">学校录取</button>
-                <button style="font-size: 0.6rem;" class="tab-button" onclick="showTab('tab1')">一分一段</button>
-            </div>
-
-            <div id="tab2" class="tab-content active">
-                <div class="ndBtnGroup ndBtnGroup2"></div>
-                <div class="filterCriteria">
-                    <div class="filter-input-group">
-                        <input type="text" id="schoolInput" placeholder="学校">
-                        <input type="text" id="majorInput" placeholder="专业">
-                        <input type="number" id="minScoreInput" placeholder="最低分">
-                        <input type="number" id="maxScoreInput" placeholder="最高分">
-                        <input type="number" id="minRankInput" placeholder="最低位次">
-                        <input type="number" id="maxRankInput" placeholder="最高位次">
-                        <button id="filterButton">查询</button>
-                    </div>
-                </div>
-                <script>
-                    document.getElementById('filterButton').addEventListener('click', function() {
-                        // 获取输入框的值
-                        const school = document.getElementById('schoolInput').value.trim();
-                        const major = document.getElementById('majorInput').value.trim();
-/*                        const minScore = parseFloat(document.getElementById('minScoreInput').value) || -Infinity;
-                        const maxScore = parseFloat(document.getElementById('maxScoreInput').value) || Infinity;
-                        const minRank = parseInt(document.getElementById('minRankInput').value) || -Infinity;
-                        const maxRank = parseInt(document.getElementById('maxRankInput').value) || Infinity;*/
-                        const minScore = document.getElementById('minScoreInput').value;
-                        const maxScore = document.getElementById('maxScoreInput').value;
-                        const minRank = document.getElementById('minRankInput').value;
-                        const maxRank = document.getElementById('maxRankInput').value;
-                        //p_nd2;
-                        const ndSchoolList = dataMap.dataList3.filter(item => {
-                            return item.nd === p_nd2;
-                        });
-                        console.log("ndSchoolList",ndSchoolList);
-                        //const filteredData = dataMap.dataList3.filter(item => {
-                        const filteredData = ndSchoolList[0].schoolList.filter(item => {
-/*                            return (
-                                (school === '' || item.schoolName.toLowerCase().includes(school)) &&
-                                (major === '' || item.value3.toLowerCase().includes(major)) &&
-                                (minScore === '' || maxScore === '' || (item.minScore >= minScore && item.minScore <= maxScore)) &&
-                                (minRank === '' || maxRank === '' || (item.minLevel <= minRank && item.minLevel >= maxRank))
-                            );*/
-                            return (
-                                (school === '' || item.schoolName.toLowerCase().includes(school)) &&
-                                (major === '' || item.value3.toLowerCase().includes(major)) &&
-                                (minScore === '' || item.minScore >= minScore) &&
-                                (maxScore === '' || item.minScore <= maxScore) &&
-                                (minRank === '' || item.minLevel <= minRank) &&
-                                (maxRank === '' || item.minLevel >= maxRank)
-                            );
-                        });
-
-                        loadTable2Data(filteredData);
-                    });
-                </script>
-
-                <table class="table" id="table2">
-                    <thead class="thead thead2">
-                        <tr>
-                            <th>学校名称</th>
-                            <th>学校编号</th>
-                            <th>专业</th>
-                            <th>人数</th>
-                            <th>最低分</th>
-                            <th>最低分位次</th>
-                        </tr>
-                    </thead>
-                    <tbody class="tbody2">
-                        <!-- 动态填充 dataList3 数据 -->
-                    </tbody>
-                </table>
-            </div>
-            <div id="tab1" class="tab-content">
-                <div class="ndBtnGroup ndBtnGroup1">
-
-                </div>
-                <table class="table" id="table1">
-                    <thead class="thead thead1">
-                    <tr>
-                        <th>分数</th>
-                        <th>人数</th>
-                        <th>累计人数</th>
-                    </tr>
-                    </thead>
-                    <tbody class="tbody1">
-                    <!-- 动态填充 dataList2 数据 -->
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    </div>
-    <script>
-        // 页面加载完成后执行 intEcharts 方法
-        window.onload = function() {
-            intPage();
-
-            fillTab1Data();
-
-            fillTab2Data();
-        };
-
-        function intPage(){
+      * */
+        function intPart1(){
             p_type1 = '总赋分';
             p_type2 = '年排';
             //初始化科目按钮
@@ -909,161 +1739,11 @@
             //初始化成绩图表
             intEcharts(p_type1,p_type2, '');
         }
-
-        var p_type1 = '总赋分';
-        var p_type2 = '年排';
-        var p_studentName = ''
-        var dataMap = {
-            dataList1: [
-                {name:'高一上学期10月月考',
-                    scoreList:[
-                        {scoreName:'总赋分',scoreValue:590,rankValue:6,rankName:'班排',rankValue2:131,rankName2:'年排'},
-                        {scoreName:'总分',scoreValue:590,rankValue:6,rankName:'班排',rankValue2:131,rankName2:'年排'},
-                        {scoreName:'语文',scoreValue:104,rankValue:5,rankName:'班排',rankValue2:57,rankName2:'年排'},
-                        {scoreName:'数学',scoreValue:119,rankValue:17,rankName:'班排',rankValue2:262,rankName2:'年排'},
-                        {scoreName:'英语',scoreValue:112.5,rankValue:10,rankName:'班排',rankValue2:130,rankName2:'年排'},
-                        {scoreName:'物理',scoreValue:91,rankValue:7,rankName:'班排',rankValue2:104,rankName2:'年排'},
-                        {scoreName:'化学',scoreValue:89,rankValue:7,rankName:'班排',rankValue2:120,rankName2:'年排'},
-                        {scoreName:'化学赋分',scoreValue:89,rankValue:7,rankName:'班排',rankValue2:120,rankName2:'年排'},
-                        {scoreName:'生物',scoreValue:74,rankValue:28,rankName:'班排',rankValue2:399,rankName2:'年排'},
-                        {scoreName:'生物赋分',scoreValue:74,rankValue:28,rankName:'班排',rankValue2:399,rankName2:'年排'},
-                    ]
-                },
-                {name:'高一上学期半期考',
-                    scoreList:[
-                        {scoreName:'总赋分',scoreValue:573,rankValue:4,rankName:'班排',rankValue2:86,rankName2:'年排'},
-                        {scoreName:'总分',scoreValue:573,rankValue:4,rankName:'班排',rankValue2:86,rankName2:'年排'},
-                        {scoreName:'语文',scoreValue:104,rankValue:10,rankName:'班排',rankValue2:116,rankName2:'年排'},
-                        {scoreName:'数学',scoreValue:108,rankValue:19,rankName:'班排',rankValue2:299,rankName2:'年排'},
-                        {scoreName:'英语',scoreValue:116.5,rankValue:20,rankName:'班排',rankValue2:135,rankName2:'年排'},
-                        {scoreName:'物理',scoreValue:80,rankValue:7,rankName:'班排',rankValue2:113,rankName2:'年排'},
-                        {scoreName:'化学',scoreValue:73,rankValue:13,rankName:'班排',rankValue2:159,rankName2:'年排'},
-                        {scoreName:'化学赋分',scoreValue:73,rankValue:13,rankName:'班排',rankValue2:159,rankName2:'年排'},
-                        {scoreName:'生物',scoreValue:91,rankValue:1,rankName:'班排',rankValue2:12,rankName2:'年排'},
-                        {scoreName:'生物赋分',scoreValue:91,rankValue:1,rankName:'班排',rankValue2:12,rankName2:'年排'},
-                    ]
-                },
-
-                {name:'高一上学期期末考',
-                    scoreList:[
-                        {scoreName:'总赋分',scoreValue:630,rankValue:1,rankName:'班排',rankValue2:23,rankName2:'年排'},
-                        {scoreName:'总分',scoreValue:630,rankValue:1,rankName:'班排',rankValue2:23,rankName2:'年排'},
-                        {scoreName:'语文',scoreValue:115,rankValue:5,rankName:'班排',rankValue2:41,rankName2:'年排'},
-                        {scoreName:'数学',scoreValue:118,rankValue:7,rankName:'班排',rankValue2:101,rankName2:'年排'},
-                        {scoreName:'英语',scoreValue:138,rankValue:6,rankName:'班排',rankValue2:19,rankName2:'年排'},
-                        {scoreName:'物理',scoreValue:83,rankValue:10,rankName:'班排',rankValue2:105,rankName2:'年排'},
-                        {scoreName:'化学',scoreValue:90,rankValue:7,rankName:'班排',rankValue2:114,rankName2:'年排'},
-                        {scoreName:'化学赋分',scoreValue:90,rankValue:7,rankName:'班排',rankValue2:114,rankName2:'年排'},
-                        {scoreName:'生物',scoreValue:86,rankValue:12,rankName:'班排',rankValue2:225,rankName2:'年排'},
-                        {scoreName:'生物赋分',scoreValue:86,rankValue:12,rankName:'班排',rankValue2:225,rankName2:'年排'},
-                    ]
-                },
-                {name:'高一下学期3月月考',
-                    scoreList:[
-                        {scoreName:'总赋分',scoreValue:611,rankValue:2,rankName:'班排',rankValue2:17,rankName2:'年排'},
-                        {scoreName:'总分',scoreValue:589,rankValue:2,rankName:'班排',rankValue2:18,rankName2:'年排'},
-                        {scoreName:'语文',scoreValue:92,rankValue:32,rankName:'班排',rankValue2:435,rankName2:'年排'},
-                        {scoreName:'数学',scoreValue:137,rankValue:3,rankName:'班排',rankValue2:30,rankName2:'年排'},
-                        {scoreName:'英语',scoreValue:120,rankValue:4,rankName:'班排',rankValue2:34,rankName2:'年排'},
-                        {scoreName:'物理',scoreValue:93,rankValue:1,rankName:'班排',rankValue2:5,rankName2:'年排'},
-                        {scoreName:'化学',scoreValue:76,rankValue:9,rankName:'班排',rankValue2:148,rankName2:'年排'},
-                        {scoreName:'化学赋分',scoreValue:83,rankValue:9,rankName:'班排',rankValue2:148,rankName2:'年排'},
-                        {scoreName:'生物',scoreValue:71,rankValue:2,rankName:'班排',rankValue2:75,rankName2:'年排'},
-                        {scoreName:'生物赋分',scoreValue:86,rankValue:2,rankName:'班排',rankValue2:75,rankName2:'年排'},
-                    ]
-                },
-                {name:'高一下学期半期考',
-                    scoreList:[
-                        {scoreName:'总赋分',scoreValue:586,rankValue:4,rankName:'班排',rankValue2:77,rankName2:'年排'},
-                        {scoreName:'总分',scoreValue:550,rankValue:4,rankName:'班排',rankValue2:128,rankName2:'年排'},
-                        {scoreName:'语文',scoreValue:105,rankValue:3,rankName:'班排',rankValue2:95,rankName2:'年排'},
-                        {scoreName:'数学',scoreValue:125,rankValue:4,rankName:'班排',rankValue2:61,rankName2:'年排'},
-                        {scoreName:'英语',scoreValue:126,rankValue:2,rankName:'班排',rankValue2:4,rankName2:'年排'},
-                        {scoreName:'物理',scoreValue:68,rankValue:21,rankName:'班排',rankValue2:258,rankName2:'年排'},
-                        {scoreName:'化学',scoreValue:62,rankValue:18,rankName:'班排',rankValue2:280,rankName2:'年排'},
-                        {scoreName:'化学赋分',scoreValue:80,rankValue:18,rankName:'班排',rankValue2:280,rankName2:'年排'},
-                        {scoreName:'生物',scoreValue:64,rankValue:7,rankName:'班排',rankValue2:192,rankName2:'年排'},
-                        {scoreName:'生物赋分',scoreValue:82,rankValue:7,rankName:'班排',rankValue2:192,rankName2:'年排'},
-                    ]
-                },
-                {name:'高一下学习6月月考',
-                    scoreList:[
-                        {scoreName:'总赋分',scoreValue:591,rankValue:1,rankName:'班排',rankValue2:31,rankName2:'年排'},
-                        {scoreName:'总分',scoreValue:555,rankValue:1,rankName:'班排',rankValue2:40,rankName2:'年排'},
-                        {scoreName:'语文',scoreValue:106,rankValue:4,rankName:'班排',rankValue2:121,rankName2:'年排'},
-                        {scoreName:'数学',scoreValue:103,rankValue:9,rankName:'班排',rankValue2:139,rankName2:'年排'},
-                        {scoreName:'英语',scoreValue:117,rankValue:9,rankName:'班排',rankValue2:69,rankName2:'年排'},
-                        {scoreName:'物理',scoreValue:89,rankValue:1,rankName:'班排',rankValue2:2,rankName2:'年排'},
-                        {scoreName:'化学',scoreValue:71,rankValue:3,rankName:'班排',rankValue2:59,rankName2:'年排'},
-                        {scoreName:'化学赋分',scoreValue:91,rankValue:3,rankName:'班排',rankValue2:59,rankName2:'年排'},
-                        {scoreName:'生物',scoreValue:69,rankValue:5,rankName:'班排',rankValue2:159,rankName2:'年排'},
-                        {scoreName:'生物赋分',scoreValue:85,rankValue:5,rankName:'班排',rankValue2:159,rankName2:'年排'},
-                    ]
-                },
-                {name:'高一下学期期末考',
-                    scoreList:[
-                        {scoreName:'总赋分',scoreValue:601,rankValue:4,rankName:'班排',rankValue2:67,rankName2:'年排'},
-                        {scoreName:'总分',scoreValue:575,rankValue:5,rankName:'班排',rankValue2:88,rankName2:'年排'},
-                        {scoreName:'语文',scoreValue:114,rankValue:3,rankName:'班排',rankValue2:42,rankName2:'年排'},
-                        {scoreName:'数学',scoreValue:126,rankValue:7,rankName:'班排',rankValue2:89,rankName2:'年排'},
-                        {scoreName:'英语',scoreValue:122,rankValue:3,rankName:'班排',rankValue2:34,rankName2:'年排'},
-                        {scoreName:'物理',scoreValue:78,rankValue:9,rankName:'班排',rankValue2:152,rankName2:'年排'},
-                        {scoreName:'化学',scoreValue:68,rankValue:13,rankName:'班排',rankValue2:187,rankName2:'年排'},
-                        {scoreName:'化学赋分',scoreValue:86,rankValue:13,rankName:'班排',rankValue2:187,rankName2:'年排'},
-                        {scoreName:'生物',scoreValue:67,rankValue:20,rankName:'班排',rankValue2:283,rankName2:'年排'},
-                        {scoreName:'生物赋分',scoreValue:75,rankValue:20,rankName:'班排',rankValue2:283,rankName2:'年排'},
-                    ]
-                },
-
-                {name:'高二上学习10月月考',
-                    scoreList:[
-                        {scoreName:'总赋分',scoreValue:596,rankValue:6,rankName:'班排',rankValue2:83,rankName2:'年排'},
-                        {scoreName:'总分',scoreValue:564.5,rankValue:6,rankName:'班排',rankValue2:83,rankName2:'年排'},
-                        {scoreName:'语文',scoreValue:103,rankValue:17,rankName:'班排',rankValue2:250,rankName2:'年排'},
-                        {scoreName:'数学',scoreValue:133,rankValue:7,rankName:'班排',rankValue2:108,rankName2:'年排'},
-                        {scoreName:'英语',scoreValue:118.5,rankValue:3,rankName:'班排',rankValue2:35,rankName2:'年排'},
-                        {scoreName:'物理',scoreValue:75,rankValue:9,rankName:'班排',rankValue2:170,rankName2:'年排'},
-                        {scoreName:'化学',scoreValue:71,rankValue:1,rankName:'班排',rankValue2:55,rankName2:'年排'},
-                        {scoreName:'化学赋分',scoreValue:92,rankValue:1,rankName:'班排',rankValue2:55,rankName2:'年排'},
-                        {scoreName:'生物',scoreValue:64,rankValue:21,rankName:'班排',rankValue2:274,rankName2:'年排'},
-                        {scoreName:'生物赋分',scoreValue:74,rankValue:21,rankName:'班排',rankValue2:274,rankName2:'年排'},
-                    ]
-                },
-            ],
-
-            //value1:分数  value2:人数   value3:累计人数
-            dataList2:[{nd:2024,
-                        scoreList: [{value1:'699-750', value2:'51', value3:'51'},
-                                    {value1:'698', value2:'12', value3:'63'},
-                                    {value1:'697', value2:'14', value3:'77'},
-                                   ]},
-                {nd:2023,
-                    scoreList: [{value1:'699-750', value2:'41', value3:'41'},
-                        {value1:'698', value2:'12', value3:'63'},
-                        {value1:'697', value2:'14', value3:'77'},
-                    ]},
-                {nd:2022,
-                    scoreList: [{value1:'699-750', value2:'31', value3:'31'},
-                        {value1:'698', value2:'12', value3:'63'},
-                        {value1:'697', value2:'14', value3:'77'},
-                    ]},
-            ],
-
-            //nd:年度 schoolName:学校名称 schoolNO:学校编号  value1:批次  value2:科类  value3:专业  bz:备注 number:人数 minScore:最低分 minLevel:最低分位次
-            dataList3:[
-                {nd:2024,
-                    schoolList:[{schoolName:'北京大学',schoolNO:'0001', value1:'本科批B段', value2:'理科', value3:'理科试验班类', bz:'原本科一批新选科物理,化学(元培)(包含专业:数学类)', number:1, minScore:699, minLevel:63},
-                        {schoolName:'北京大学',schoolNO:'0001', value1:'本科批B段', value2:'理科', value3:'化学类', bz:'原本科一批新选科物理,化学(包含专业:化学、应用化学、应用化学(材料方向)、化学生物学)', number:1, minScore:709, minLevel:63},
-                        {schoolName:'北京大学',schoolNO:'0001', value1:'本科批B段', value2:'理科', value3:'生物科学类', bz:'原本科一批新选科不提科目要求', number:1, minScore:705, minLevel:63},
-                    ],},
-                {nd:2023,
-                    schoolList:[{schoolName:'北京大学',schoolNO:'0001', value1:'本科批B段', value2:'理科', value3:'心理学类', bz:'原本科一批新选科物理,化学(元培)(包含专业:数学类)', number:1, minScore:699, minLevel:63},
-                        {schoolName:'北京大学',schoolNO:'0001', value1:'本科批B段', value2:'理科', value3:'经济学类', bz:'原本科一批新选科物理,化学(包含专业:化学、应用化学、应用化学(材料方向)、化学生物学)', number:1, minScore:709, minLevel:63},
-                        {schoolName:'北京大学',schoolNO:'0001', value1:'本科批B段', value2:'理科', value3:'工商管理类', bz:'原本科一批新选科不提科目要求', number:1, minScore:705, minLevel:63},
-                        ],},
-
-
-            ],
+        function intPart2(){
+            //初始化一份一段 dataList2
+            fillTab1Data();
+            //初始化学校信息  dataList2
+            fillTab2Data();
         }
 
         // 更新图表函数
@@ -1162,10 +1842,12 @@
                         show: true,
                     },
                     axisLabel: {
+                        show: true,
+                        interval: 0,
                         formatter: function(value) {
                             var str = '';
                             if(value.length >= 3){
-                                str = value.substring(0, 3) + '\n' + value.substring(3, 8)+ '\n' + value.substring(8, value.length);
+                                str = value.substring(0, 3) + '\n' + value.substring(3, 7)+ '\n' + value.substring(7, value.length);
                             }
 
                             return str; // 按需格式化并换行
@@ -1316,6 +1998,7 @@
 
                 // 默认选中第一个按钮
                 if (index === 0) {
+                    p_nd1 = nd;
                     button.classList.add('active');
                     // 加载第一个年度的数据到 table1
                     loadTable1Data(dataMap.dataList2[0].scoreList);
@@ -1332,6 +2015,7 @@
 
                     // 根据年度加载数据
                     const selectedNd = this.dataset.nd;
+                    p_nd1 = selectedNd;
                     const selectedData = dataMap.dataList2.find(item => item.nd == selectedNd);
                     if (selectedData) {
                         loadTable1Data(selectedData.scoreList);
@@ -1344,7 +2028,7 @@
             // 隐藏等待提示动效
             hidLoading()
         }
-        var p_nd2;
+
         function fillTab2Data() {
             // 1. 提取 dataList2 中的 nd 字段，生成年度按钮组
             const ndBtnGroup = document.querySelector('.ndBtnGroup2');
@@ -1497,6 +2181,17 @@
             });
         }
 
+        function login(){
+            document.getElementById('loginContent').style.display = 'none';
+            document.getElementById('logoutWrapper').style.display = 'block';
+            document.getElementById('partContent').style.opacity = 1;
+        }
+        function logout(){
+            document.getElementById('loginContent').style.display = 'block';
+            document.getElementById('logoutWrapper').style.display = 'none';
+            document.getElementById('partContent').style.opacity = 0;
+        }
+
         function showLoading() {
             // 显示等待提示动效
             const loadingIndicator = document.getElementById('loadingIndicator');
@@ -1508,7 +2203,6 @@
             loadingIndicator.style.display = 'none';
         }
         //nd:年度 schoolName:学校名称 schoolNO:学校编号  value1:批次  value2:科类  value3:专业  bz:备注 number:人数 minScore:最低分 minLevel:最低分位次
-
         function showAIask(schoolName,schoolNO,value1,value2,value3,number,minScore) {
 
             /*const result = dataMap.dataList1.map(item => {
@@ -1551,8 +2245,8 @@
             const userInput = document.getElementById('user-input');
             // 写入内容
             var contentstr = '你是一个高考AI，现在需要你根据以下信息，给出一个合理的建议。';
-            contentstr += '现在是'+ formattedDate +'，学生'+p_studentName+'的平时考试成绩数据分别为：' + scoreString+ '。';
-            contentstr += '学生'+p_studentName+'在2027年参加高考，想报考' + schoolName + ' 学校编码' + schoolNO + ' 录取批次' + value1 + ' 科类' + value2 + ' 专业' + value3 + '，';
+            contentstr += '现在是'+ formattedDate +'，学生'+studentMap.name+'的平时考试成绩数据分别为：' + scoreString+ '。';
+            contentstr += '学生'+studentMap.name+'在2027年参加高考，想报考' + schoolName + ' 学校编码' + schoolNO + ' 录取批次' + value1 + ' 科类' + value2 + ' 专业' + value3 + '，';
             contentstr += '在 '+p_nd2 + '年'+schoolName + ' 学校编码' + schoolNO + ' 录取批次' + value1 + ' 科类' + value2 + ' 专业' + value3 + ' 在四川省录取人数为' + number + '人 最低录取分数' + minScore + '分。';
             contentstr += '请先介绍一下这个学校和这个专业的情况以及就业方向和就业情况，然后给出一个合理的建议。';
 
